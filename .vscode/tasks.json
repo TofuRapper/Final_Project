@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Build Game (Allegro)",
+            "command": "g++",
+            "args": [
+                "-g",
+                "${workspaceFolder}/main.cpp",
+                "${workspaceFolder}/Leaderboard.cpp",
+                "${workspaceFolder}/Draw.cpp",
+                "${workspaceFolder}/Map.cpp",
+                "${workspaceFolder}/Shop.cpp",
+                "${workspaceFolder}/Treasure.cpp",
+                "${workspaceFolder}/Fish.cpp",
+                "${workspaceFolder}/Harpoon.cpp",
+                "${workspaceFolder}/Diver.cpp",
+                "-o",
+                "${workspaceFolder}/my_game.exe",
+                "-I",
+                "${workspaceFolder}/allegro/include",
+                "-L",
+                "${workspaceFolder}/allegro/lib",
+                "-lallegro_monolith-debug",
+                "-lallegro_monolith"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiles the game with local Allegro libraries"
+        }
+    ]
+}
