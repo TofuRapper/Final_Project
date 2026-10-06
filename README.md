@@ -1,5 +1,7 @@
 # Deep Sea Diver 🤿
 
+**▶ 線上遊玩：https://tofurapper.github.io/Final_Project/**（瀏覽器直接執行，以 Emscripten 編譯為 WebAssembly）
+
 以 C++ 與 Allegro 5 從零實作的 2D 橫向捲軸深海探險遊戲，約 3,000 行程式、10 個類別模組。課程規定只能使用 C++ 與 Allegro、必須採用物件導向設計且不得使用現成模板，因此遊戲迴圈、狀態管理、碰撞、鏡頭與音效皆為自行設計。
 
 ## 遊戲概念
@@ -44,3 +46,7 @@ g++ main.cpp Game.cpp Leaderboard.cpp Draw.cpp Map.cpp Shop.cpp Treasure.cpp Fis
 **操作**：方向鍵移動、按住 SPACE 瞄準並放開發射、捕到大魚時連打 B。
 
 Demo 影片：`group47.mp4`
+
+## 網頁版（WebAssembly）
+
+`web/build.sh` 以 Emscripten 將原始碼與 Allegro 5（SDL2 後端）編譯成 WebAssembly，輸出至 `web/dist/`；首次執行會自動下載 emsdk、Allegro 與 minimp3（約 1 GB）。網頁版排行榜只存在該次瀏覽，重新整理後會清空。

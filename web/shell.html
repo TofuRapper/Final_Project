@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Sea Diver</title>
+<style>
+  :root { --bg: #0b0d12; --fg: #e8e6e1; --muted: #8b8f98; --accent: #f2b640; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 16px; }
+  h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: .02em; }
+  #stage { position: relative; background: #000; border-radius: 6px; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  canvas { display: block; outline: none; transform-origin: 0 0; }
+  #overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px; background: rgba(11,13,18,.82); cursor: pointer; }
+  #overlay button { font: inherit; font-size: 16px; padding: 10px 22px; border: 0; border-radius: 999px;
+    background: var(--accent); color: #1a1408; font-weight: 600; cursor: pointer; }
+  #overlay button:disabled { opacity: .5; cursor: progress; }
+  #status { color: var(--muted); font-size: 13px; }
+  .controls { color: var(--muted); font-size: 13px; text-align: center; max-width: 900px; }
+  kbd { font: 12px ui-monospace, monospace; padding: 1px 6px; border: 1px solid #333; border-bottom-width: 2px;
+    border-radius: 4px; color: var(--fg); background: #15181f; }
+</style>
+</head>
+<body>
+  <h1>Deep Sea Diver</h1>
+  <div id="stage">
+    <canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+    <div id="overlay">
+      <button id="play" disabled>Loading…</button>
+      <div id="status"></div>
+    </div>
+  </div>
+  <div class="controls">Arrow keys swim · hold <kbd>D</kbd> at the boat edge to dive · <kbd>Space</kbd> aim, <kbd>Space</kbd> again to fire · mash <kbd>B</kbd> to reel in big fish · <kbd>S</kbd> shop · <kbd>Esc</kbd> menu</div>
+<script>
+  const canvas = document.getElementById('canvas');
+  const overlay = document.getElementById('overlay');
+  const play = document.getElementById('play');
+  const statusEl = document.getElementById('status');
+  let started = false;
+  // The game draws at a fixed size; scale it with a CSS transform (not CSS width/height,
+  // which SDL treats as a window resize) so the page fits any screen.
+  const GAME_W = 800, GAME_H = 600;
+  const stage = document.getElementById('stage');
+  function fit() {
+    const s = Math.min((innerWidth - 32) / GAME_W, (innerHeight - 120) / GAME_H, 2);
+    stage.style.width = GAME_W * s + 'px';
+    stage.style.height = GAME_H * s + 'px';
+    // SDL sets the canvas's CSS size itself (e.g. half its pixels on 2x screens),
+    // so scale from whatever that size currently is.
+    canvas.style.transform = `scale(${GAME_W * s / (canvas.offsetWidth || GAME_W)})`;
+  }
+  canvas.width = GAME_W; canvas.height = GAME_H;
+  fit();
+  addEventListener('resize', fit);
+  new ResizeObserver(fit).observe(canvas);
+  var Module = {
+    canvas,
+    noInitialRun: true,
+    print: (t) => console.log(t),
+    printErr: (t) => console.warn(t),
+    setStatus: (t) => { if (!started) statusEl.textContent = t.replace(/\(([\d.]+)\/([\d.]+)\)/,
+      (_, a, b) => `${Math.round(a / b * 100)}%`); },
+    onRuntimeInitialized: () => { play.disabled = false; play.textContent = '▶ Play'; statusEl.textContent = ''; },
+  };
+  // Starting from a click lets the browser play audio and gives the canvas keyboard focus.
+  overlay.addEventListener('click', () => {
+    if (play.disabled || started) return;
+    started = true;
+    overlay.remove();
+    canvas.focus();
+    Module.callMain([]);
+  });
+  // Keep arrow keys and space from scrolling the page.
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+  }, { passive: false });
+</script>
+{{{ SCRIPT }}}
+</body>
+</html>
